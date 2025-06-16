@@ -1,42 +1,80 @@
+<?php
+// Database connection
+$conn = mysqli_connect("localhost", "root", "", "lab_7");
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $matric = $_POST['matric'];
+    $name = $_POST['name'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $role = $_POST['role'];
+    
+    $sql = "INSERT INTO users (matric, name, password, role) VALUES ('$matric', '$name', '$password', '$role')";
+    
+    if (mysqli_query($conn, $sql)) {
+        $success = "Registration successful!";
+    } else {
+        $error = "Error: " . $sql . "<br>" . mysqli_error($conn);
+    }
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>Lab 6 Q1</title>
+    <title>Registration Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
 </head>
 <body>
-    <?php
-    $name = "Arfat Elnour";
-    $matricNumber = "AI230244";
-    $course = "web";
-    $yearOfStudy = "Year 2";
-    $address = "123 University Street, Campus Town";
-    ?>
+    <h1>Registration Form</h1>
     
-    <table border="1">
-        <tr>
-            <th>Detail</th>
-            <th>Information</th>
-        </tr>
-        <tr>
-            <td>Name</td>
-            <td><?php echo $name; ?></td>
-        </tr>
-        <tr>
-            <td>Matric Number</td>
-            <td><?php echo $matricNumber; ?></td>
-        </tr>
-        <tr>
-            <td>Course</td>
-            <td><?php echo $course; ?></td>
-        </tr>
-        <tr>
-            <td>Year of Study</td>
-            <td><?php echo $yearOfStudy; ?></td>
-        </tr>
-        <tr>
-            <td>Address</td>
-            <td><?php echo $address; ?></td>
-        </tr>
-    </table>
+    <?php if (isset($success)): ?>
+        <p class="success"><?php echo $success; ?></p>
+    <?php endif; ?>
+    
+    <?php if (isset($error)): ?>
+        <p class="error"><?php echo $error; ?></p>
+    <?php endif; ?>
+    
+    <form method="post" action="">
+        <div class="form-group">
+            <label for="matric">Matric:</label>
+            <input type="text" id="matric" name="matric" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="">Please select</option>
+                <option value="lecturer">Lecturer</option>
+                <option value="student">Student</option>
+            </select>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+    
+    <p><a href="read.php">View Users</a></p>
 </body>
 </html>
